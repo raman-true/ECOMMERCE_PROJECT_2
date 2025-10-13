@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Cart Items</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Debug Cart Items</h1>
+    <button onclick="checkCartItems()">Check Cart Items</button>
+    <button onclick="checkProducts()">Check All Products</button>
+    <button onclick="clearCart()">Clear Cart</button>
+    
+    <div id="results"></div>
+
+    <script>
+        const supabaseUrl = 'https://kazatbfpvpalauoshzti.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthemF0YmZwdnBhbGF1b3NoenRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MjU1NjksImV4cCI6MjA3NTUwMTU2OX0.r5n67JGpY7yw1pHGP7KAi9wA7_MhsiiYE-nWgYr_bj0';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+        async function checkCartItems() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Checking cart items...</p>';
+            
+            try {
+                // Get current user
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    results.innerHTML = '<p style="color: red;">No user logged in. Please log in first.</p>';
+                    return;
+                }
+
+                // Get cart items
+                const { data: cartItems, error } = await supabaseClient
+                    .from('cart_items')
+                    .select(`
+                        id,
+                        product_id,
+                        variant_id,
+                        quantity,
+                        products (
+                            id,
+                            name,
+                            price,
+                            seller_id
+                        )
+                    `)
+                    .eq('user_id', user.id);
+
+                if (error) {
+                    results.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                    return;
+                }
+
+                results.innerHTML = `
+                    <h2>Cart Items (${cartItems.length})</h2>
+                    <pre>${JSON.stringify(cartItems, null, 2)}</pre>
+                `;
+            } catch (err) {
+                results.innerHTML = `<p style="color: red;">Exception: ${err.message}</p>`;
+            }
+        }
+
+        async function checkProducts() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Checking all products...</p>';
+            
+            try {
+                const { data: products, error } = await supabaseClient
+                    .from('products')
+                    .select('id, name, price, seller_id')
+                    .limit(10);
+
+                if (error) {
+                    results.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                    return;
+                }
+
+                results.innerHTML = `
+                    <h2>First 10 Products</h2>
+                    <pre>${JSON.stringify(products, null, 2)}</pre>
+                `;
+            } catch (err) {
+                results.innerHTML = `<p style="color: red;">Exception: ${err.message}</p>`;
+            }
+        }
+
+        async function clearCart() {
+            const results = document.getElementById('results');
+            
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    results.innerHTML = '<p style="color: red;">No user logged in.</p>';
+                    return;
+                }
+
+                const { error } = await supabaseClient
+                    .from('cart_items')
+                    .delete()
+                    .eq('user_id', user.id);
+
+                if (error) {
+                    results.innerHTML = `<p style="color: red;">Error clearing cart: ${error.message}</p>`;
+                    return;
+                }
+
+                results.innerHTML = '<p style="color: green;">Cart cleared successfully!</p>';
+            } catch (err) {
+                results.innerHTML = `<p style="color: red;">Exception: ${err.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

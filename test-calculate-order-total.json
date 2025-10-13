@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "product_id": "your-product-uuid-here",
+      "variant_id": null,
+      "quantity": 1
+    }
+  ],
+  "shippingAddress": {
+    "country": "Australia",
+    "state": "NSW",
+    "postcode": "2000"
+  }
+}
