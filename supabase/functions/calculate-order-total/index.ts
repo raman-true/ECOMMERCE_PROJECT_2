@@ -3,7 +3,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.57.2';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
 };
 
 Deno.serve(async (req: Request) => {
@@ -44,9 +44,9 @@ Deno.serve(async (req: Request) => {
       console.error('Error fetching global settings:', globalSettingsError.message);
     }
     
-    // Convert tax rate from decimal to percentage (0.10 -> 10.0)
-    const globalDefaultTaxRate = globalSettings?.default_tax_rate ? parseFloat(globalSettings.default_tax_rate.toString()) * 100 : 10.0;
-    const globalFreeShippingThreshold = globalSettings?.free_shipping_threshold || 99.00;
+    // Tax rate is already stored as percentage in database (10.0 means 10%)
+    const globalDefaultTaxRate = globalSettings?.default_tax_rate ? parseFloat(globalSettings.default_tax_rate.toString()) : 10.0;
+    const globalFreeShippingThreshold = globalSettings?.free_shipping_threshold ? parseFloat(globalSettings.free_shipping_threshold.toString()) : 99.00;
     const globalDefaultShippingCost = 9.95; // Default shipping cost when threshold not met
     const allowSellerTaxOverride = globalSettings?.allow_seller_tax_override || false;
     const taxType = globalSettings?.tax_type || 'GST';
@@ -152,7 +152,7 @@ Deno.serve(async (req: Request) => {
       });
       
       if (allowSellerTaxOverride && sellerSettings?.tax_rate_override !== undefined && sellerSettings.tax_rate_override !== null) {
-        effectiveSellerTaxRate = parseFloat(sellerSettings.tax_rate_override.toString()) * 100;
+        effectiveSellerTaxRate = parseFloat(sellerSettings.tax_rate_override.toString());
         console.log('[DEBUG] Using seller tax override:', effectiveSellerTaxRate + '%');
       } else {
         console.log('[DEBUG] Using global tax rate:', effectiveSellerTaxRate + '%');
@@ -295,8 +295,8 @@ Deno.serve(async (req: Request) => {
             .eq('seller_id', sellerId)
             .maybeSingle();
           
-          const effectiveSellerTaxRate = sellerSettings?.tax_rate_override 
-            ? parseFloat(sellerSettings.tax_rate_override.toString()) * 100
+          const effectiveSellerTaxRate = sellerSettings?.tax_rate_override
+            ? parseFloat(sellerSettings.tax_rate_override.toString())
             : globalDefaultTaxRate;
           sellerTaxRates.add(effectiveSellerTaxRate);
         }

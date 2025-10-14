@@ -23,10 +23,11 @@ export function AdminGlobalSettingsPage() {
 
   React.useEffect(() => {
     if (settings) {
-      setDefaultTaxRate(settings.default_tax_rate ?? 0);
+      console.log('Loading settings:', settings);
+      setDefaultTaxRate(Number(settings.default_tax_rate ?? 0));
       setTaxType(settings.tax_type ?? 'GST');
       setAllowSellerTaxOverride(settings.allow_seller_tax_override ?? false);
-      setFreeShippingThreshold(settings.free_shipping_threshold ?? 0);
+      setFreeShippingThreshold(Number(settings.free_shipping_threshold ?? 0));
       setPlatformFulfillmentEnabled(settings.platform_fulfillment_enabled ?? true);
       setStandardDeliveryDays(settings.standard_delivery_days ?? '2-5');
       setExpressDeliveryDays(settings.express_delivery_days ?? '1-2');
