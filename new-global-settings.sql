@@ -56,8 +56,12 @@ WHERE NOT EXISTS (SELECT 1 FROM public.global_settings);
 -- Enable RLS
 ALTER TABLE public.global_settings ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Admins can manage global settings" ON public.global_settings;
+DROP POLICY IF EXISTS "Anyone can view global settings" ON public.global_settings;
+
 -- Admin can view and manage global settings
-CREATE POLICY IF NOT EXISTS "Admins can manage global settings"
+CREATE POLICY "Admins can manage global settings"
 ON public.global_settings
 FOR ALL
 TO authenticated
@@ -75,7 +79,7 @@ WITH CHECK (
 );
 
 -- Everyone can view global settings (read-only for non-admins)
-CREATE POLICY IF NOT EXISTS "Anyone can view global settings"
+CREATE POLICY "Anyone can view global settings"
 ON public.global_settings
 FOR SELECT
 TO authenticated
@@ -102,20 +106,26 @@ CREATE TABLE IF NOT EXISTS public.notification_preferences (
 -- Enable RLS
 ALTER TABLE public.notification_preferences ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view own notification preferences" ON public.notification_preferences;
+DROP POLICY IF EXISTS "Users can insert own notification preferences" ON public.notification_preferences;
+DROP POLICY IF EXISTS "Users can update own notification preferences" ON public.notification_preferences;
+DROP POLICY IF EXISTS "Admins can view all notification preferences" ON public.notification_preferences;
+
 -- Users can view and manage their own notification preferences
-CREATE POLICY IF NOT EXISTS "Users can view own notification preferences"
+CREATE POLICY "Users can view own notification preferences"
 ON public.notification_preferences
 FOR SELECT
 TO authenticated
 USING (user_id = auth.uid());
 
-CREATE POLICY IF NOT EXISTS "Users can insert own notification preferences"
+CREATE POLICY "Users can insert own notification preferences"
 ON public.notification_preferences
 FOR INSERT
 TO authenticated
 WITH CHECK (user_id = auth.uid());
 
-CREATE POLICY IF NOT EXISTS "Users can update own notification preferences"
+CREATE POLICY "Users can update own notification preferences"
 ON public.notification_preferences
 FOR UPDATE
 TO authenticated
@@ -123,7 +133,7 @@ USING (user_id = auth.uid())
 WITH CHECK (user_id = auth.uid());
 
 -- Admins can view all notification preferences
-CREATE POLICY IF NOT EXISTS "Admins can view all notification preferences"
+CREATE POLICY "Admins can view all notification preferences"
 ON public.notification_preferences
 FOR SELECT
 TO authenticated
@@ -157,15 +167,20 @@ CREATE TABLE IF NOT EXISTS public.supplier_notifications (
 -- Enable RLS
 ALTER TABLE public.supplier_notifications ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Suppliers can view own notifications" ON public.supplier_notifications;
+DROP POLICY IF EXISTS "Admins can view all notifications" ON public.supplier_notifications;
+DROP POLICY IF EXISTS "Service role can insert notifications" ON public.supplier_notifications;
+
 -- Suppliers can view their own notifications
-CREATE POLICY IF NOT EXISTS "Suppliers can view own notifications"
+CREATE POLICY "Suppliers can view own notifications"
 ON public.supplier_notifications
 FOR SELECT
 TO authenticated
 USING (supplier_id = auth.uid());
 
 -- Admins can view all notifications
-CREATE POLICY IF NOT EXISTS "Admins can view all notifications"
+CREATE POLICY "Admins can view all notifications"
 ON public.supplier_notifications
 FOR SELECT
 TO authenticated
@@ -177,7 +192,7 @@ USING (
 );
 
 -- System can insert notifications (service role)
-CREATE POLICY IF NOT EXISTS "Service role can insert notifications"
+CREATE POLICY "Service role can insert notifications"
 ON public.supplier_notifications
 FOR INSERT
 TO authenticated
