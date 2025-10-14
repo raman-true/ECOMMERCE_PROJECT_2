@@ -1,7 +1,7 @@
 // src/components/layout/SellerSidebar.tsx
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, List, Settings, X } from 'lucide-react';
+import { LayoutDashboard, Package, List, Settings, Bell, X } from 'lucide-react';
 
 interface SellerSidebarProps {
   isSidebarOpen: boolean;
@@ -15,6 +15,7 @@ export function SellerSidebar({ isSidebarOpen, toggleSidebar }: SellerSidebarPro
     { path: '/seller', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/seller/products', icon: Package, label: 'Products' },
     { path: '/seller/categories', icon: List, label: 'Categories & Depts.' },
+    { path: '/seller/notifications', icon: Bell, label: 'Notifications' },
     { path: '/seller/settings', icon: Settings, label: 'Settings' },
   ];
 

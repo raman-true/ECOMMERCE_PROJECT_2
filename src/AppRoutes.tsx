@@ -72,6 +72,7 @@ import { SellerEditDepartmentPage } from './pages/SellerEditDepartmentPage';
 import { SellerSettingsPage } from './pages/SellerSettingsPage';
 import { SellerApplicationPage } from './pages/SellerApplicationPage';
 import { AdminSellerApplicationsPage } from './pages/AdminSellerApplicationsPage';
+import { SellerNotificationPreferencesPage } from './pages/SellerNotificationPreferencesPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 
@@ -234,6 +235,7 @@ export function AppRoutes() {
                     <Route path="categories/new-department" element={<SellerAddDepartmentPage />} />
                     <Route path="categories/departments/:id/edit" element={<SellerEditDepartmentPage />} />
                     <Route path="settings" element={<SellerSettingsPage />} />
+                    <Route path="notifications" element={<SellerNotificationPreferencesPage />} />
                   </Routes>
                 </SellerLayout>
               </SellerProtectedRoute>
