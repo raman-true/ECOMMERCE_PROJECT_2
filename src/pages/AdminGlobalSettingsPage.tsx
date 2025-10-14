@@ -7,48 +7,15 @@ import { useAdminProducts } from '../hooks/useSupabase';
 export function AdminGlobalSettingsPage() {
   const { settings, loading, error, updateGlobalSettings } = useGlobalSettings();
   const { fetchAllProducts, updateProduct } = useAdminProducts();
-  
-  // Updated state to match new schema - only use defaults when database value is null/undefined
-  const [defaultTaxRate, setDefaultTaxRate] = useState(
-    settings?.default_tax_rate !== null && settings?.default_tax_rate !== undefined 
-      ? settings.default_tax_rate 
-      : 0
-  );
-  const [taxType, setTaxType] = useState(
-    settings?.tax_type !== null && settings?.tax_type !== undefined 
-      ? settings.tax_type 
-      : 'GST'
-  );
-  const [allowSellerTaxOverride, setAllowSellerTaxOverride] = useState(
-    settings?.allow_seller_tax_override !== null && settings?.allow_seller_tax_override !== undefined 
-      ? settings.allow_seller_tax_override 
-      : false
-  );
-  const [freeShippingThreshold, setFreeShippingThreshold] = useState(
-    settings?.free_shipping_threshold !== null && settings?.free_shipping_threshold !== undefined 
-      ? settings.free_shipping_threshold 
-      : 99.00
-  );
-  const [platformFulfillmentEnabled, setPlatformFulfillmentEnabled] = useState(
-    settings?.platform_fulfillment_enabled !== null && settings?.platform_fulfillment_enabled !== undefined 
-      ? settings.platform_fulfillment_enabled 
-      : true
-  );
-  const [standardDeliveryDays, setStandardDeliveryDays] = useState(
-    settings?.standard_delivery_days !== null && settings?.standard_delivery_days !== undefined 
-      ? settings.standard_delivery_days 
-      : '2-5'
-  );
-  const [expressDeliveryDays, setExpressDeliveryDays] = useState(
-    settings?.express_delivery_days !== null && settings?.express_delivery_days !== undefined 
-      ? settings.express_delivery_days 
-      : '1-2'
-  );
-  const [deliveryTrackingEnabled, setDeliveryTrackingEnabled] = useState(
-    settings?.delivery_tracking_enabled !== null && settings?.delivery_tracking_enabled !== undefined 
-      ? settings.delivery_tracking_enabled 
-      : true
-  );
+
+  const [defaultTaxRate, setDefaultTaxRate] = useState<number>(0);
+  const [taxType, setTaxType] = useState<string>('GST');
+  const [allowSellerTaxOverride, setAllowSellerTaxOverride] = useState<boolean>(false);
+  const [freeShippingThreshold, setFreeShippingThreshold] = useState<number>(0);
+  const [platformFulfillmentEnabled, setPlatformFulfillmentEnabled] = useState<boolean>(true);
+  const [standardDeliveryDays, setStandardDeliveryDays] = useState<string>('2-5');
+  const [expressDeliveryDays, setExpressDeliveryDays] = useState<string>('1-2');
+  const [deliveryTrackingEnabled, setDeliveryTrackingEnabled] = useState<boolean>(true);
   
   const [applyToAllProducts, setApplyToAllProducts] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -56,47 +23,14 @@ export function AdminGlobalSettingsPage() {
 
   React.useEffect(() => {
     if (settings) {
-      // Only use defaults when database value is null/undefined
-      setDefaultTaxRate(
-        settings.default_tax_rate !== null && settings.default_tax_rate !== undefined 
-          ? settings.default_tax_rate 
-          : 0
-      );
-      setTaxType(
-        settings.tax_type !== null && settings.tax_type !== undefined 
-          ? settings.tax_type 
-          : 'GST'
-      );
-      setAllowSellerTaxOverride(
-        settings.allow_seller_tax_override !== null && settings.allow_seller_tax_override !== undefined 
-          ? settings.allow_seller_tax_override 
-          : false
-      );
-      setFreeShippingThreshold(
-        settings.free_shipping_threshold !== null && settings.free_shipping_threshold !== undefined 
-          ? settings.free_shipping_threshold 
-          : 99.00
-      );
-      setPlatformFulfillmentEnabled(
-        settings.platform_fulfillment_enabled !== null && settings.platform_fulfillment_enabled !== undefined 
-          ? settings.platform_fulfillment_enabled 
-          : true
-      );
-      setStandardDeliveryDays(
-        settings.standard_delivery_days !== null && settings.standard_delivery_days !== undefined 
-          ? settings.standard_delivery_days 
-          : '2-5'
-      );
-      setExpressDeliveryDays(
-        settings.express_delivery_days !== null && settings.express_delivery_days !== undefined 
-          ? settings.express_delivery_days 
-          : '1-2'
-      );
-      setDeliveryTrackingEnabled(
-        settings.delivery_tracking_enabled !== null && settings.delivery_tracking_enabled !== undefined 
-          ? settings.delivery_tracking_enabled 
-          : true
-      );
+      setDefaultTaxRate(settings.default_tax_rate ?? 0);
+      setTaxType(settings.tax_type ?? 'GST');
+      setAllowSellerTaxOverride(settings.allow_seller_tax_override ?? false);
+      setFreeShippingThreshold(settings.free_shipping_threshold ?? 0);
+      setPlatformFulfillmentEnabled(settings.platform_fulfillment_enabled ?? true);
+      setStandardDeliveryDays(settings.standard_delivery_days ?? '2-5');
+      setExpressDeliveryDays(settings.express_delivery_days ?? '1-2');
+      setDeliveryTrackingEnabled(settings.delivery_tracking_enabled ?? true);
     }
   }, [settings]);
 
